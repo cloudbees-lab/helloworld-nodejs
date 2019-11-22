@@ -40,7 +40,7 @@ pipeline {
       }
       input {
         message "Should we deploy?"
-        submitter "beedemo-ops"
+        submitter "Antwana"
         submitterParameter "APPROVER"
       }
       steps {
