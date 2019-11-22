@@ -4,9 +4,6 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '2'))
     skipDefaultCheckout true
   }
-  triggers {
-    eventTrigger simpleMatch('hello-api-deploy-event')
-  }
   stages {
     stage('Test') {
       agent {
@@ -26,6 +23,7 @@ pipeline {
     stage('Build and Push Image') {
       when {
         beforeAgent true
+        beforeInput true
         branch 'master'
       }
       steps {
@@ -35,14 +33,18 @@ pipeline {
     stage('Deploy') {
       when {
         beforeAgent true
-        beforeInput true
         branch 'master'
       }
+      options {
+        timeout(time: 60, unit: 'SECONDS') 
+      }
       input {
-        message "Should we continue?"
+        message "Should we deploy?"
+        submitter "beedemo-ops"
+        submitterParameter "APPROVER"
       }
       steps {
-        echo "Continuing with deployment"
+        echo "Continuing with deployment - approved by ${APPROVER}"
       }
     }
   }
